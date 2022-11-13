@@ -69,6 +69,8 @@ func (fw *fileWatcherImpl) Stop() {
 	fw.stopCh <- struct{}{}
 	fw.stopWg.Wait()
 
+	// TODO: manage out nolint
+	// nolint:errcheck
 	fw.watcher.RemoveWatch(fw.path)
 	fw.watcher = nil
 	fw.path = ""
