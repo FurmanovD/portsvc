@@ -1,0 +1,17 @@
+version: '3.7'
+
+networks:
+  dev_net:
+    name: dev_net    
+    external: false
+
+services:
+
+  tests:
+    build:
+      dockerfile: ./docker/test/Dockerfile
+      context: ./..
+    container_name: portsvc-tests
+    networks:
+      - dev_net
+  

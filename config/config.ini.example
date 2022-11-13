@@ -1,0 +1,11 @@
+[portsvc]
+DB_HOST = "portsvc-db"
+DB_PORT = 3306
+DB_NAME = "portsvc"
+# TODO: load all secrets from Vault or another secure system
+DB_USER = "portsvc"
+DB_PASS = "password"
+# DB_MAX_CONNECTIONS = 10
+
+INPUT_DIRECTORY_PATH = "/in"
+
