@@ -17,6 +17,9 @@ export GIT_COMMIT=$$(git log -1 --format="%H")
 generate:
 	go generate ./...
 
+vendor:
+	@go mod vendor
+
 appbuilder-build: 
 	# the base image will be built the first time only
 	@echo "Check and build if not exist a base App Builder image"
@@ -29,7 +32,7 @@ appbuilder-clean:
 
 appbuilder-rebuild: appbuilder-clean appbuilder-build
 
-image-build: appbuilder-build
+image-build: vendor appbuilder-build
 # the application image will be built one time only
 	@echo "APP_VERSION=${APP_VERSION}"
 	@echo "BUILD_TIME=${BUILD_TIME}"
@@ -96,5 +99,5 @@ models:
 lint:
 	golangci-lint run ./...
 
-.PHONY: appbuilder-rebuild image-build image-rebuild image-clean image-push build clean run run-prebuilt run-deps test-docker stop test models generate lint 
+.PHONY: vendor appbuilder-rebuild image-build image-rebuild image-clean image-push build clean run run-prebuilt run-deps test-docker stop test models generate lint 
 
