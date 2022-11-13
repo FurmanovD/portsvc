@@ -1,0 +1,6 @@
+################################################################################
+# Build a go-environment-image to speed up the application image generation
+################################################################################
+FROM golang:1.18.8-alpine3.16 AS builder
+
+RUN apk update && apk add --no-cache gcc build-base make

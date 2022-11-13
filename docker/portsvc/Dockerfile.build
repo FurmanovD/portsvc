@@ -1,0 +1,45 @@
+ARG APPBUILDER_IMAGE
+
+################################################################################
+# Build portsvc binary
+################################################################################
+FROM ${APPBUILDER_IMAGE} AS builder
+
+RUN apk update && apk add --no-cache gcc build-base make
+
+ARG APP_NAME=${APP_NAME:-portsvc}
+ARG APP_VERSION
+ARG BUILD_TIME
+ARG GIT_COMMIT
+
+COPY ./ /project
+
+WORKDIR /project/cmd/portsvc
+
+ENV GO111MODULE=on
+ENV GOSUMDB=off
+RUN CGO_ENABLED=1 GOOS=linux go build -mod vendor \
+    -ldflags "-X main.Version=${APP_VERSION} -X main.BuildTime=${BUILD_TIME} -X main.GitCommit=${GIT_COMMIT}"\
+    -a -v -o /project/${APP_NAME}
+
+################################################################################
+# Build Docker Image
+################################################################################
+FROM alpine:3.16
+
+ARG APP_NAME=${APP_NAME:-portsvc}
+ARG APP_VERSION
+ARG BUILD_TIME
+ARG GIT_COMMIT
+
+LABEL name="${APP_NAME}" version="${VERSION}" buidTime="${BUILD_TIME}" gitCommit="${GIT_COMMIT}"
+
+RUN apk update && apk add --no-cache tar gzip libstdc++
+
+RUN mkdir /app && chown 65534:65534 -R /app
+RUN mkdir /in && chown 65534:65534 -R /in
+USER 65534
+
+COPY --from=builder /project/portsvc /app
+
+ENTRYPOINT ["/app/portsvc", "-config=/app/config.ini"] 

@@ -1,0 +1,48 @@
+version: '3.7'
+
+networks:
+  dev_net:
+    name: dev_net
+    external: false
+
+services:
+
+  mysqldb:
+    image: mysql:5.7
+    build:
+      context: ./..
+    restart: always
+    container_name: portsvc-db
+    environment:
+      MYSQL_DATABASE: 'portsvc'
+      MYSQL_USER: 'portsvc'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    networks:
+      - dev_net
+    expose:
+      - "3306"
+    volumes:
+      - ./../test/db:/var/lib/mysql
+
+  portsvc:
+    build:
+      dockerfile: ./docker/portsvc/Dockerfile
+      context: ./..
+      args:
+        IMAGE_TAG: $IMAGE_TAG
+    container_name: portsvc
+    environment:
+      PORT: 8081
+      LOGLEVEL: trace
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysqldb
+    # restart: always
+    networks:
+      - dev_net
+    expose:
+      - "8081"

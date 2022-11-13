@@ -1,0 +1,20 @@
+pkgname = "automodel"
+output = "internal/pkg/db/automodel"
+wipe  = true
+no-tests = true
+
+[mysql]
+    dbname="portsvc"
+    host="localhost"
+    port=3306
+    user="portsvc"
+    pass="password"
+    sslmode="false"
+    testdbname="unit_test"
+    skipsqlcmd=true
+    whitelist = [
+        "ports",
+        "ports_unlocks",
+        "ports_aliases",
+    ]
+
